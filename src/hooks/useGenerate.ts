@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { saveHistory } from "@/store/historyStore";
 
 export function useGenerate() {
   const [loading, setLoading] =
@@ -23,25 +24,26 @@ export function useGenerate() {
       );
 
       setScript(`
+
+const fakeScript = `
 Narasi video untuk:
 
 ${prompt}
 
 Ini adalah contoh script hasil AI.
-      `);
+`;
 
-      setVideoUrl(
-        "https://www.w3schools.com/html/mov_bbb.mp4"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+const fakeVideo =
+  "https://www.w3schools.com/html/mov_bbb.mp4";
 
-  return {
-    loading,
-    script,
-    videoUrl,
-    generate,
-  };
-}
+setScript(fakeScript);
+
+setVideoUrl(fakeVideo);
+
+saveHistory({
+  id: crypto.randomUUID(),
+  prompt,
+  script: fakeScript,
+  videoUrl: fakeVideo,
+  createdAt: Date.now()
+});
