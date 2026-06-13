@@ -17,7 +17,7 @@ export default function Sidebar({
   return (
     <aside
       className="
-      w-64
+      w-56
       border-r
       border-white/10
       p-4
@@ -32,7 +32,7 @@ export default function Sidebar({
         w-full
         p-3
         rounded-xl
-        hover:bg-cyan-500/10
+        hover:text-cyan-300
         "
       >
         <SquarePen size={20} />
