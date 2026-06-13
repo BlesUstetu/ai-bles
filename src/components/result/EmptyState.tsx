@@ -10,15 +10,21 @@ export default function EmptyState() {
       text-center
       "
     >
-      <h1
-        className="
-        text-5xl
-        font-bold
-        mb-4
-        "
-      >
-        AI Content Studio
-      </h1>
+    <h1
+     className="
+     text-5xl
+     font-bold
+
+     text-transparent
+     bg-clip-text
+
+     bg-gradient-to-r
+     from-cyan-400
+     to-violet-500
+     "
+   >
+    AI Content Studio
+   </h1>
 
       <p className="text-white/60">
         Generate AI Videos From Prompt
