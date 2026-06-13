@@ -31,8 +31,14 @@ export default function GenerateButton({
             bg-gradient-to-r
             from-cyan-400
             to-violet-500
-            animate-spin
-            shadow-[0_0_20px_rgba(0,245,255,.5)]
+            <AudioWaveform
+             className={
+              loading
+               ? "animate-spin"
+               : ""
+             }
+            />
+            shadow-[0_0_25px_rgba(0,245,255,.5)]
             `
             : `
             bg-white
