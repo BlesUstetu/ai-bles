@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { saveHistory } from "@/store/historyStore";
 
 export function useGenerate() {
   const [loading, setLoading] =
@@ -13,37 +12,60 @@ export function useGenerate() {
   const [videoUrl, setVideoUrl] =
     useState("");
 
-  const generate = async (
+  async function generate(
     prompt: string
-  ) => {
+  ) {
+    if (!prompt.trim()) return;
+
     setLoading(true);
 
     try {
-      await new Promise((resolve) =>
-        setTimeout(resolve, 4000)
+      const response =
+        await fetch("/api/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+          body: JSON.stringify({
+            prompt
+          })
+        });
+
+      if (!response.ok) {
+        throw new Error(
+          "Generate gagal"
+        );
+      }
+
+      const data =
+        await response.json();
+
+      setScript(data.script);
+
+      setVideoUrl(data.videoUrl);
+
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        "Gagal membuat video"
       );
+    } finally {
+      setLoading(false);
+    }
+  }
 
-      setScript(`
+  function reset() {
+    setScript("");
+    setVideoUrl("");
+  }
 
-const fakeScript = `
-Narasi video untuk:
-
-${prompt}
-
-Ini adalah contoh script hasil AI.
-`;
-
-const fakeVideo =
-  "https://www.w3schools.com/html/mov_bbb.mp4";
-
-setScript(fakeScript);
-
-setVideoUrl(fakeVideo);
-
-saveHistory({
-  id: crypto.randomUUID(),
-  prompt,
-  script: fakeScript,
-  videoUrl: fakeVideo,
-  createdAt: Date.now()
-});
+  return {
+    loading,
+    script,
+    videoUrl,
+    generate,
+    reset
+  };
+}
