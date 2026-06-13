@@ -9,13 +9,21 @@ export interface HistoryItem {
 const KEY = "acs-history";
 
 export function getHistory(): HistoryItem[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === "undefined") {
+    return [];
+  }
 
-  const data = localStorage.getItem(KEY);
+  const raw = localStorage.getItem(KEY);
 
-  if (!data) return [];
+  if (!raw) {
+    return [];
+  }
 
-  return JSON.parse(data);
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
 }
 
 export function saveHistory(
@@ -23,14 +31,25 @@ export function saveHistory(
 ) {
   const history = getHistory();
 
-  const updated = [item, ...history];
+  const updated = [
+    item,
+    ...history,
+  ];
 
   localStorage.setItem(
     KEY,
     JSON.stringify(updated)
   );
+
+  window.dispatchEvent(
+    new Event("history-update")
+  );
 }
 
 export function clearHistory() {
   localStorage.removeItem(KEY);
+
+  window.dispatchEvent(
+    new Event("history-update")
+  );
 }
