@@ -174,6 +174,21 @@ export default function HomePage() {
 
         </div>
 
+        {
+        loading && (
+        <div
+         className="
+         glass
+         rounded-2xl
+         p-4
+         mb-6
+         "
+        >
+         ⚡ Rendering AI Video...
+        </div>
+        )
+        }
+
       </section>
     </main>
   );
