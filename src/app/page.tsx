@@ -2,49 +2,88 @@
 
 import { useState } from "react";
 
-import Sidebar from "@/components/Sidebar";
-import PromptBar from "@/components/PromptBar";
-import ScriptCard from "@/components/ScriptCard";
-import VideoCard from "@/components/VideoCard";
+import Sidebar from "@/components/layout/Sidebar";
 
-export default function HomePage(){
+import PromptBar from "@/components/prompt/PromptBar";
 
-  const [prompt,setPrompt] = useState("");
+import ScriptCard from "@/components/result/ScriptCard";
 
-  const [loading,setLoading] = useState(false);
+import VideoCard from "@/components/result/VideoCard";
 
-  const [script,setScript] = useState("");
+import EmptyState from "@/components/result/EmptyState";
 
-  const [video,setVideo] = useState("");
+import HistoryList from "@/components/history/HistoryList";
 
-  async function generate(){
+import { useGenerate } from "@/hooks/useGenerate";
 
-    if(!prompt) return;
+import { useHistory } from "@/hooks/useHistory";
 
-    setLoading(true);
+import { useVoice } from "@/hooks/useVoice";
 
-    setTimeout(()=>{
+export default function HomePage() {
+  const [prompt, setPrompt] =
+    useState("");
 
-      setScript(`
-Video sinematik tentang:
-${prompt}
+  const [showHistory,
+    setShowHistory] =
+    useState(false);
 
-Narasi contoh hasil AI.
-      `);
+  const {
+    loading,
+    script,
+    videoUrl,
+    generate,
+    reset
+  } = useGenerate();
 
-      setVideo(
-        "https://www.w3schools.com/html/mov_bbb.mp4"
-      );
+  const {
+    history
+  } = useHistory();
 
-      setLoading(false);
+  const {
+    recording,
+    startRecording
+  } = useVoice((text) => {
+    setPrompt((prev) =>
+      prev
+        ? prev + " " + text
+        : text
+    );
+  });
 
-    },3000);
+  const hasResult =
+    Boolean(script) ||
+    Boolean(videoUrl);
+
+  async function handleGenerate() {
+    await generate(prompt);
   }
 
-  return(
-    <main className="h-screen flex">
+  function handleNewChat() {
+    setPrompt("");
 
-      <Sidebar/>
+    reset();
+
+    setShowHistory(false);
+  }
+
+  return (
+    <main
+      className="
+      h-screen
+      flex
+      "
+    >
+      <Sidebar
+        onNewChat={
+          handleNewChat
+        }
+        onOpenHistory={() =>
+          setShowHistory(
+            !showHistory
+          )
+        }
+      />
 
       <section
         className="
@@ -53,7 +92,6 @@ Narasi contoh hasil AI.
         flex-col
         "
       >
-
         <div
           className="
           flex-1
@@ -62,45 +100,81 @@ Narasi contoh hasil AI.
           max-w-5xl
           mx-auto
           w-full
-          space-y-6
           "
         >
 
-          <div
-            className="
-            text-center
-            py-12
-            "
-          >
-            <h1
+          {showHistory && (
+            <div
               className="
-              text-4xl
-              font-bold
+              glass
+              rounded-3xl
+              p-5
+              mb-6
               "
             >
-              AI Content Studio
-            </h1>
-          </div>
+              <h2
+                className="
+                font-bold
+                mb-4
+                "
+              >
+                Riwayat
+              </h2>
 
-          <ScriptCard script={script}/>
+              <HistoryList
+                items={history}
+              />
+            </div>
+          )}
 
-          <VideoCard videoUrl={video}/>
+          {!hasResult && (
+            <EmptyState />
+          )}
+
+          {hasResult && (
+            <div
+              className="
+              space-y-6
+              "
+            >
+              <ScriptCard
+                script={script}
+              />
+
+              <VideoCard
+                videoUrl={
+                  videoUrl
+                }
+              />
+            </div>
+          )}
 
         </div>
 
         <div className="p-6">
 
           <PromptBar
-            value={prompt}
-            setValue={setPrompt}
-            loading={loading}
-            onGenerate={generate}
+            prompt={prompt}
+            setPrompt={
+              setPrompt
+            }
+            loading={
+              loading
+            }
+            recording={
+              recording
+            }
+            onVoice={
+              startRecording
+            }
+            onGenerate={
+              handleGenerate
+            }
           />
 
         </div>
 
       </section>
-
     </main>
   );
 }
