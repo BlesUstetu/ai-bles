@@ -39,7 +39,7 @@ export default function PromptBar({
         <Plus size={20} />
       </button>
 
-      <input
+      <textarea />
         value={prompt}
         onChange={(e) =>
           setPrompt(e.target.value)
