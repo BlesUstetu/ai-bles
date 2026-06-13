@@ -1,0 +1,16 @@
+{
+  "name": "ai-content-studio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build"
+  },
+  "dependencies": {
+    "next": "15.3.5",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "lucide-react": "^0.525.0",
+    "framer-motion": "^12.23.0"
+  }
+}
