@@ -12,15 +12,26 @@ export function useHistory() {
     useState<HistoryItem[]>([]);
 
   useEffect(() => {
-    setHistory(getHistory());
+    const updateHistory = () => {
+      setHistory(getHistory());
+    };
+
+    updateHistory();
+
+    window.addEventListener(
+      "history-update",
+      updateHistory
+    );
+
+    return () => {
+      window.removeEventListener(
+        "history-update",
+        updateHistory
+      );
+    };
   }, []);
 
-  function refresh() {
-    setHistory(getHistory());
-  }
-
   return {
-    history,
-    refresh
+    history
   };
 }
